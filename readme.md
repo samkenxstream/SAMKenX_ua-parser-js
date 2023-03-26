@@ -12,7 +12,7 @@
 
 # UAParser.js
 
-JavaScript library to detect Browser, Engine, OS, CPU, and Device type/model from User-Agent data that can be used either in browser (client-side) or node.js (server-side).
+JavaScript library to detect Browser, Engine, OS, CPU, and Device type/model from User-Agent & Client-Hints data that can be used either in browser (client-side) or node.js (server-side).
 
 * Author    : Faisal Salman <<f@faisalman.com>>
 * Demo      : https://faisalman.github.io/ua-parser-js
@@ -33,6 +33,11 @@ JavaScript library to detect Browser, Engine, OS, CPU, and Device type/model fro
 <td><br/><p>UAParser.js has been upgraded to detect comprehensive device data based on the User-Agent and User-Agent Client Hints.</p><p>This package supports all device types including Apple and Android devices and can be used either in a browser (client-side) or Node.js environment (server-side).</p><p>Visit <a href="https://www.npmjs.com/package/@51degrees/ua-parser-js">↗ 51Degrees <u>UAParser</u></a> to get started.</p>
 </td>
 </tr>
+<tr>
+<td colspan="2">
+<a href="https://opencollective.com/ua-parser-js">↗ Become a sponsor</a>
+</td>
+</tr>
 </tbody>
 </table>
 
@@ -41,13 +46,11 @@ JavaScript library to detect Browser, Engine, OS, CPU, and Device type/model fro
 # Documentation
 ### UAParser([user-agent:string][,extensions:object][,headers:object(since@1.1)])
 
-In The Browser environment you dont need to pass the user-agent string to the function, you can just call the funtion and it should automatically get the string from the `window.navigator.userAgent`, but that is not the case in nodejs. The user-agent string must be passed in nodejs for the function to work.
-Usually you can find the user agent in:
-`request.headers["user-agent"]`.
+In the browser environment you dont need to pass the user-agent string to the function, you can just call the funtion and it should automatically get the string from the `window.navigator.userAgent`, but that is not the case in nodejs. The user-agent string must be passed in' nodejs for the function to work. Usually you can find the user agent in: `request.headers["user-agent"]`.
 
 
 ## Constructor
-When you call `UAParser` with the `new` keyword `UAParser` will return a new instance with an empty result object, you have to call one of the available methods to get the information from the user-agent string.
+When you call `UAParser` with the `new` keyword, `UAParser` will return a new instance with an empty result object, you have to call one of the available methods to get the information from the user-agent string.
 Like so:
 * `new UAParser([user-agent:string][,extensions:object][,headers:object(since@1.1)])`
 ```js
@@ -56,25 +59,28 @@ console.log(parser); // {}
 let parserResults = parser.getResult();
 console.log(parserResults);
 /** {
-  "ua": "",
-  "browser": {},
-  "engine": {},
-  "os": {},
-  "device": {},
-  "cpu": {}
+  "ua"      : "",
+  "browser" : {},
+  "engine"  : {},
+  "os"      : {},
+  "device"  : {},
+  "cpu"     : {}
+  
+  // since@1.1 
+  ,"ua_ch"  : {}
 } */
 ```
 
 When you call UAParser without the `new` keyword, it will automatically call `getResult()` function and return the parsed results.
 * `UAParser([user-agent:string][,extensions:object][,headers:object(since@1.1)])`
-    * returns result object `{ ua: '', browser: {}, cpu: {}, device: {}, engine: {}, os: {} }`
+    * returns result object `{ ua: '', browser: {}, cpu: {}, device: {}, engine: {}, os: {} /* added since@1.1: ua_ch: {} */ }`
 
 ## Methods
 
 #### Methods table
 The methods are self explanatory, here's a small overview on all the available methods:
 *  `getResult()` - returns all function object calls, user-agent string, browser info, cpu, device, engine, os:
-`{ ua: '', browser: {}, cpu: {}, device: {}, engine: {}, os: {} }`.
+`{ ua: '', browser: {}, cpu: {}, device: {}, engine: {}, os: {} /* added since@1.1: ua_ch: {} */ }`.
 
  *  `getBrowser()`      - returns the browser name and version.
  *  `getDevice()`       - returns the device model, type, vendor.
@@ -87,7 +93,7 @@ The methods are self explanatory, here's a small overview on all the available m
 ---
 
 * `getResult()`
-    * returns `{ ua: '', browser: UABrowser {}, cpu: UACPU {}, device: UADevice {}, engine: UAEngine {}, os: UAOS {} }`
+    * returns `{ ua: '', browser: {}, cpu: {}, device: {}, engine: {}, os: {} /* added since@1.1: ua_ch: {} */ }`
 
 * `getBrowser()`
     * returns `{ name: '', version: '' }`
@@ -96,19 +102,19 @@ The methods are self explanatory, here's a small overview on all the available m
 # Possible 'browser.name':
 2345Explorer, 360 Browser, Amaya, Android Browser, Arora, Avant, Avast, AVG,
 BIDUBrowser, Baidu, Basilisk, Blazer, Bolt, Brave, Bowser, Camino, Chimera,
-Chrome Headless, Chrome WebView, Chrome, Chromium, Cobalt, Comodo Dragon, Dillo,
+[Mobile] Chrome [Headless/WebView], Chromium, Cobalt, Comodo Dragon, Dillo,
 Dolphin, Doris, DuckDuckGo, Edge, Electron, Epiphany, Facebook, Falkon, Fennec, 
-Firebird, Firefox [Focus/Reality], Flock, Flow, GSA, GoBrowser, Huawei Browser, 
-ICE Browser, IE, IEMobile, IceApe, IceCat, IceDragon, Iceweasel, Instagram, 
-Iridium, Iron, Jasmine, Kakao[Story/Talk], K-Meleon, Kindle, Klar, Konqueror, 
-LBBROWSER, Line, LinkedIn, Links, Lunascape, Lynx, MIUI Browser, Maemo Browser, 
-Maemo, Maxthon, MetaSr Midori, Minimo, Mobile Safari, Mosaic, Mozilla, NetFront, 
+Firebird, [Mobile] Firefox [Focus/Reality], Flock, Flow, GSA, GoBrowser, HeyTap,
+Huawei Browser, ICE Browser, IE, IEMobile, IceApe, IceCat, IceDragon, Iceweasel, 
+Instagram, Iridium, Iron, Jasmine, Kakao[Story/Talk], K-Meleon, Kindle, Klar, 
+Konqueror, LBBROWSER, Line, LinkedIn, Links, Lunascape, Lynx, MIUI Browser, 
+Maemo Browser, Maemo, Maxthon, MetaSr Midori, Minimo, Mosaic, Mozilla, NetFront, 
 NetSurf, Netfront, Netscape, NokiaBrowser, Obigo, Oculus Browser, OmniWeb, 
 Opera Coast, Opera [Mini/Mobi/Tablet], PaleMoon, PhantomJS, Phoenix, Polaris, 
-Puffin, QQ, QQBrowser, QQBrowserLite, Quark, QupZilla, RockMelt, Safari, 
+Puffin, QQ, QQBrowser, QQBrowserLite, Quark, QupZilla, RockMelt, [Mobile] Safari, 
 Sailfish Browser, Samsung Browser, SeaMonkey, Silk, Skyfire, Sleipnir, Slim, 
 SlimBrowser, Swiftfox, Tesla, Tizen Browser, UCBrowser, UP.Browser, Viera, 
-Vivaldi, Waterfox, WeChat, Weibo, Yandex, baidu, iCab, w3m, Whale Browser...
+Vivaldi, Waterfox, WeChat, Weibo, Yandex, baidu, iCab, w3m, Whale Browser, ...
 
 # 'browser.version' determined dynamically
 ```
@@ -180,7 +186,7 @@ Ubuntu, Unix, VectorLinux, Viera, watchOS, WebOS, Windows [Phone/Mobile], Zenwal
     * set UA string to be parsed
     * returns current instance
 
-#### * is() utility `since@1.1`
+#### * `is():boolean` utility `since@1.1`
 
 ```js
 // Is just a shorthand to check whether specified item has a property with equals value (case-insensitive)
@@ -244,7 +250,7 @@ let engine = uap.getEngine();
 engine.is("Blink");                 // true
 ```
 
-#### * toString() utility `since@1.1`
+#### * `toString():string` utility `since@1.1`
 
 ```js
 // Retrieve full-name values as a string
@@ -285,9 +291,33 @@ engine.version;                     // "28.0.1500.95"
 engine.toString();                  // "Blink 28.0.1500.95"
 ```
 
+#### * `withClientHints():Promise<object>|Thenable<object>` `since@1.1`
+
+Unlike reading user-agent data, accessing client-hints data in browser-environment must be done in an asynchronous way. Worry not, you can chain the UAParser's `get*` method with `withClientHints()` to read the client-hints data as well that will return the updated data as a `Promise`. In nodejs-environment / browser-environment with non-secure context or without client-hints support (basically anything that's not chromium-based) this will return the updated data as a `Thenable` (can be chained with `then()`).
+
+```js
+(async function () {  
+    let ua = new UAParser();
+
+    // get browser data from user-agent only :
+    let browser = ua.getBrowser();
+    console.log('Using User-Agent: ', browser);
+
+    // get browser data from client-hints (with user-agent as fallback) :
+    browser = await ua.getBrowser().withClientHints();
+    console.log('Using Client-Hints: ', browser);
+
+    // alternatively :
+    ua.getBrowser().withClientHints().then(function (browser) {
+        console.log('Using Client-Hints: ', browser);
+    });
+})();
+```
+
+
 ## Extending Regex
 
-If you want to detect something that's not currently provided by UAParser.js (eg: bots, specific apps, etc), you can pass a list of regexes to extend internal UAParser.js regexes with your own.
+If you want to detect something that's not currently provided by UAParser.js (eg: `bots`, specific apps, etc), you can pass a list of regexes to extend internal UAParser.js regexes with your own.
 
 * `UAParser([uastring,] extensions [,headers:object(since@1.1)])`
 
@@ -359,6 +389,18 @@ console.log(myParser2.setUA(myUA2).getDevice());  // {vendor: "MyTab", model: "1
             cpu: {
                 architecture: ""
             }
+
+            // added since@1.1:
+            ,ua_ch: {
+                architecture: "",
+                brands: "",
+                bitness: "",
+                fullVersionList: "",
+                mobile: "",
+                model: "",
+                platform: "",
+                platformVersion: ""
+            }
         }
     */
     // Default result depends on current window.navigator.userAgent value
@@ -412,11 +454,13 @@ http.createServer(function (req, res) {
     var ua = uap(req.headers['user-agent']);
 
     /* // BEGIN since@1.1 - you can also pass client-hints data to UAParser
-    
+
+    // note: only works in secure context (https:// or localhost or file://)
+
     var getHighEntropyValues = 'Sec-CH-UA-Full-Version-List, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-UA-Arch, Sec-CH-UA-Bitness';
     res.setHeader('Accept-CH', getHighEntropyValues);
     res.setHeader('Critical-CH', getHighEntropyValues);
-
+    
     var ua = uap(req.headers);
 
     // END since@1.1 */
@@ -427,6 +471,12 @@ http.createServer(function (req, res) {
 .listen(1337, '127.0.0.1');
 
 console.log('Server running at http://127.0.0.1:1337/');
+```
+
+## Using ES Modules
+
+```js
+import { UAParser } from 'ua-parser-js';
 ```
 
 ## Using TypeScript

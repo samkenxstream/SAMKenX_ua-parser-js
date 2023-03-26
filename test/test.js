@@ -82,6 +82,7 @@ describe('Returns', function () {
         assert.deepEqual(new UAParser('').getResult(), 
             {
                 ua : '',
+                ua_ch : { architecture: undefined, bitness: undefined, brands: undefined, fullVersionList: undefined, mobile: false, model: undefined, platform: undefined, platformVersion: undefined },
                 browser: { name: undefined, version: undefined, major: undefined },
                 cpu: { architecture: undefined },
                 device: { vendor: undefined, model: undefined, type: undefined },
@@ -194,6 +195,7 @@ describe('is() utility method', function () {
         assert.strictEqual(uap.getBrowser().name, "IEMobile");
         assert.strictEqual(uap.getBrowser().is("IEMobile"), true);
         assert.strictEqual(uap.getBrowser().is("IE"), false);
+        assert.strictEqual(uap.getBrowser().is("11.0"), false);
     });
 
     it('Should ignore "Browser" suffix', function () {
@@ -203,6 +205,7 @@ describe('is() utility method', function () {
     it('Should ignore case', function () {
         assert.strictEqual(uap.getEngine().name, "Trident");
         assert.strictEqual(uap.getEngine().is("tRiDeNt"), true);
+        assert.strictEqual(uap.getEngine().is("7.0"), false);
     });
 
     it('Should get exact name', function () {
@@ -228,11 +231,12 @@ describe('is() utility method', function () {
 
     it('Should get result after reassignment', function () {
         uap.setUA("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36");
-        assert.strictEqual(uap.getOS().name, "Mac OS");
+        assert.strictEqual(uap.getOS().name, "macOS");
         assert.strictEqual(uap.getOS().is("Mac OS"), true);
-        assert.strictEqual(uap.getOS().is("M ac"), false);
         assert.strictEqual(uap.getOS().is("macOS"), true);
         assert.strictEqual(uap.getOS().is("mac OS"), true);
+        
+        assert.strictEqual(uap.getOS().is("M ac"), false);
         assert.strictEqual(uap.getOS().is("M      a c   "), false);
         assert.strictEqual(uap.getOS().is("Mac OS OS"), false);
         assert.strictEqual(uap.getOS().is("Mac OS X"), false);
@@ -350,53 +354,229 @@ describe('Map UA-CH headers', function () {
         'sec-ch-ua-platform-version' : '13',
         'user-agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
     };
+    
+    let uap = UAParser(headers).withClientHints();
+    let browser = new UAParser(headers).getBrowser().withClientHints();
+    let cpu = new UAParser(headers).getCPU().withClientHints();
+    let device = new UAParser(headers).getDevice().withClientHints();
+    let engine = new UAParser(headers).getEngine().withClientHints();
+    let os = new UAParser(headers).getOS().withClientHints();
 
-    const headers2 = {
-        'sec-ch-ua-mobile' : '?1',
-        'user-agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
+    let ua_ch = {
+        "architecture": "ARM",
+        "bitness": "64",
+        "brands": [
+          {
+            "brand": "Chromium",
+            "version": "93"
+          },
+          {
+            "brand": "Google Chrome",
+            "version": "93"
+          },
+          {
+            "brand": " Not;A Brand",
+            "version": "99"
+          }
+        ],
+        "fullVersionList": [
+          {
+            "brand": "Chromium",
+            "version": "93.0.1.2"
+          },
+          {
+            "brand": "Google Chrome",
+            "version": "93.0.1.2"
+          },
+          {
+            "brand": " Not;A Brand",
+            "version": "99.0.1.2"
+          }
+        ],
+        "mobile": true,
+        "model": "Pixel 99",
+        "platform": "Windows",
+        "platformVersion": "13"
     };
 
-    let uap = UAParser(headers);
-    let browser = uap.browser;
-    let cpu = uap.cpu;
-    let device = uap.device;
-    let engine = uap.engine;
-    let os = uap.os;
+    it('Can read from client-hints headers using `withClientHints()`', function () {  
 
-    it('Can read from client-hints headers', function () {  
-
+        assert.deepEqual(uap.ua_ch, ua_ch);
+        assert.strictEqual(uap.ua, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36");
+        assert.strictEqual(uap.browser.name, "Chrome");
+        assert.strictEqual(uap.browser.version, "93.0.1.2");
+        assert.strictEqual(uap.browser.major, "93");        
         assert.strictEqual(browser.name, "Chrome");
         assert.strictEqual(browser.version, "93.0.1.2");
         assert.strictEqual(browser.major, "93");
+        assert.strictEqual(uap.cpu.architecture, "arm64");
         assert.strictEqual(cpu.architecture, "arm64");
+        assert.strictEqual(uap.device.type, "mobile");
+        assert.strictEqual(uap.device.model, "Pixel 99");
+        assert.strictEqual(uap.device.vendor, undefined);
         assert.strictEqual(device.type, "mobile");
         assert.strictEqual(device.model, "Pixel 99");
         assert.strictEqual(device.vendor, undefined);
+        assert.strictEqual(uap.engine.name, 'Blink');
+        assert.strictEqual(uap.engine.version, '110.0.0.0');
         assert.strictEqual(engine.name, 'Blink');
         assert.strictEqual(engine.version, '110.0.0.0');
+        assert.strictEqual(uap.os.name, "Windows");
+        assert.strictEqual(uap.os.version, "11");
         assert.strictEqual(os.name, "Windows");
         assert.strictEqual(os.version, "11");
     });
 
-    it('Can read from user-agent header', function () {  
+    it('Only read from user-agent header when called without `withClientHints()`', function () { 
 
-        uap = UAParser(headers2);
-        browser = uap.browser;
-        cpu = uap.cpu;
-        device = uap.device;
-        engine = uap.engine;
-        os = uap.os;
+        uap = UAParser(headers);
+        browser = new UAParser(headers).getBrowser();
+        cpu = new UAParser(headers).getCPU();
+        device = new UAParser(headers).getDevice();
+        engine = new UAParser(headers).getEngine();
+        os = new UAParser(headers).getOS();
 
-        assert.strictEqual(browser.name, "Chrome");
-        assert.strictEqual(browser.version, "110.0.0.0");
-        assert.strictEqual(browser.major, "110");
-        assert.strictEqual(cpu.architecture, "amd64");
-        assert.strictEqual(device.type, "mobile");
-        assert.strictEqual(device.model, undefined);
-        assert.strictEqual(device.vendor, undefined);
-        assert.strictEqual(engine.name, 'Blink');
-        assert.strictEqual(engine.version, '110.0.0.0');
-        assert.strictEqual(os.name, "Linux");
-        assert.strictEqual(os.version, "x86_64");
+        assert.deepEqual(uap.ua_ch, ua_ch);
+        assert.strictEqual(uap.browser.name, "Chrome");
+        assert.strictEqual(uap.browser.version, "110.0.0.0");
+        assert.strictEqual(uap.browser.major, "110");
+        assert.strictEqual(uap.cpu.architecture, "amd64");
+        assert.strictEqual(uap.device.type, undefined);
+        assert.strictEqual(uap.device.model, undefined);
+        assert.strictEqual(uap.device.vendor, undefined);
+        assert.strictEqual(uap.engine.name, 'Blink');
+        assert.strictEqual(uap.engine.version, '110.0.0.0');
+        assert.strictEqual(uap.os.name, "Linux");
+        assert.strictEqual(uap.os.version, "x86_64");
+    });
+
+    it('Fallback to user-agent header when using `withClientHints()` but found no client hints-related headers', function () {  
+
+        const headers2 = {
+            'sec-ch-ua-mobile' : '?1',
+            'user-agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
+        };
+        
+        uap = UAParser(headers2).withClientHints();
+
+        ua_ch = {
+            "architecture": undefined,
+            "bitness": undefined,
+            "brands": undefined,
+            "fullVersionList": undefined,
+            "mobile": true,
+            "model": undefined,
+            "platform": undefined,
+            "platformVersion": undefined
+        };
+
+        assert.deepEqual(uap.ua_ch, ua_ch);
+        assert.strictEqual(uap.browser.name, "Chrome");
+        assert.strictEqual(uap.browser.version, "110.0.0.0");
+        assert.strictEqual(uap.browser.major, "110");
+        assert.strictEqual(uap.cpu.architecture, "amd64");
+        assert.strictEqual(uap.device.type, "mobile");
+        assert.strictEqual(uap.device.model, undefined);
+        assert.strictEqual(uap.device.vendor, undefined);
+        assert.strictEqual(uap.engine.name, 'Blink');
+        assert.strictEqual(uap.engine.version, '110.0.0.0');
+        assert.strictEqual(uap.os.name, "Linux");
+        assert.strictEqual(uap.os.version, "x86_64");
+    });
+
+    it('Can detect Apple silicon from client hints data', function () {  
+
+        // https://github.com/faisalman/ua-parser-js/issues/489#issuecomment-1479213579
+        const httpHeadersFromAppleSilicon = {
+            'sec-ch-ua-arch' : 'arm',
+            'sec-ch-ua-platform' : 'macOS',
+            'sec-ch-ua-mobile' : '?0',
+            'sec-ch-ua' : '"Google Chrome";v="111", "Not(A:Brand";v="8", "Chromium";v="111"',
+            'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0'
+        };
+        
+        UAParser(httpHeadersFromAppleSilicon).withClientHints().then(function (ua) {
+
+            // Only works in Chrome
+            /* 
+                if (ua.os.is("macOS") && 
+                    ua.cpu.is("arm") &&
+                    !ua.device.is("mobile") && 
+                    !ua.device.is("tablet")) {
+                        // possibly an Apple silicon device
+                    }
+            */
+
+            assert.strictEqual(ua.os.is("macOS"), true);
+            assert.strictEqual(ua.cpu.is("arm"), true);            
+            assert.strictEqual(ua.device.is("mobile"), false);
+            assert.strictEqual(ua.device.is("tablet"), false);
+        });
+    });
+});
+
+describe('Map UA-CH JS', () => {
+
+    it('does not throw when using withClientHints() in non-supported environment', () => {
+        assert.doesNotThrow(() => { 
+            new UAParser().getResult().withClientHints();
+        });
+    });
+
+    window = { navigator : { userAgent : '' , userAgentData : new NavigatorUAData() } };
+    function NavigatorUAData () {
+        this.mobile = false;
+        this.platform = '';
+        this.brands = [{ brand : 'A Chromium-based Browser', version : '1' }];
+        this.getHighEntropyValues = (values) => {
+            return new Promise((resolve) => {
+                const result = {
+                    brands : [{ brand : 'A Chromium-based Browser', version : '1' }],
+                    fullVersionList : [{ brand : 'A Chromium-based Browser', version : '1.2.3' }],
+                    architecture : 'x86',
+                    bitness : '64',
+                    mobile : true,
+                    model : 'Galaxy S3',
+                    platform : 'Android',
+                    platformVersion : '1000'                
+                };
+                resolve(result);
+            });
+        }
+    };
+    delete require.cache[require.resolve('./../src/ua-parser')];
+    const UAParserWithWindow = require('./../src/ua-parser');
+
+    it('Can read client hints from browser', async () => {
+
+        let uap = new UAParserWithWindow()
+
+        let os = await uap.getOS().withClientHints();
+
+        assert.strictEqual(os.name, 'Android');
+        assert.strictEqual(os.is('Android'), true);
+        assert.strictEqual(os.toString(), 'Android 1000');
+
+        let result = await uap.getResult().withClientHints();
+
+        assert.strictEqual(result.browser.name, 'A Chromium-based Browser');
+        assert.strictEqual(result.browser.version, '1.2.3');
+        assert.strictEqual(result.cpu.architecture, 'amd64');
+        assert.strictEqual(result.os.name, 'Android');
+
+        await uap.getDevice().withClientHints().then((device) => {
+            assert.strictEqual(device.type, 'mobile');
+            assert.strictEqual(device.vendor, undefined);
+            assert.strictEqual(device.model, 'Galaxy S3');
+        });
+
+        let result_without_ch = uap.getResult();
+
+        assert.strictEqual(result_without_ch.browser.name, undefined);
+
+        uap.setUA("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36");
+        assert.strictEqual(uap.getOS().name, "macOS");
+        
+        // TODO : create full tests
     });
 });

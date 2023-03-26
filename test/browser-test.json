@@ -234,7 +234,7 @@
         "ua"      : "Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1_1 like Mac OS X; en) AppleWebKit/534.46.0 (KHTML, like Gecko) CriOS/19.0.1084.60 Mobile/9B206 Safari/7534.48.3",
         "expect"  :
         {
-            "name"    : "Chrome",
+            "name"    : "Mobile Chrome",
             "version" : "19.0.1084.60",
             "major"   : "19"
         }
@@ -254,7 +254,7 @@
         "ua"      : "Mozilla/5.0 (Linux; U; Android-4.0.3; en-us; Galaxy Nexus Build/IML74K) AppleWebKit/535.7 (KHTML, like Gecko) CrMo/16.0.912.75 Mobile Safari/535.7",
         "expect"  :
         {
-            "name"    : "Chrome",
+            "name"    : "Mobile Chrome",
             "version" : "16.0.912.75",
             "major"   : "16"
         }
@@ -509,6 +509,16 @@
         }
     },
     {
+        "desc"    : "HeyTap",
+        "ua"      : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.61 Safari/537.36 HeyTapBrowser/40.8.10.1",
+        "expect"  :
+        {
+            "name"    : "HeyTap",
+            "version" : "40.8.10.1",
+            "major"   : "40"
+        }
+    },
+    {
         "desc"    : "HuaweiBrowser",
         "ua"      : "Mozilla/5.0 (Linux; Android 6.0.1; LYA-AL00；HMSCore/4.0.0 GMS/10.4 ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.64 HuaweiBrowser/10.0.3.102 Mobile Safari/537.36",
         "expect"  :
@@ -756,6 +766,16 @@
             "name"    : "Mobile Safari",
             "version" : "4.0.5",
             "major"   : "4"
+        }
+    },
+    {
+        "desc"    : "Mobile Safari",
+        "ua"      : "Mozilla/5.0 (iPhone; CPU iPhone OS 16_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)  Mobile/15E148 Safari/604.1",
+        "expect"  :
+        {
+            "name"    : "Mobile Safari",
+            "version" : "undefined",
+            "major"   : "undefined"
         }
     },
     {
@@ -1299,6 +1319,16 @@
         }
     },
     {
+        "desc"    : "Yandex",
+        "ua"      : "Mozilla/5.0 (Linux; arm_64; Android 11; M2101K7AG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.125 YaApp_Android/22.70 YaSearchBrowser/22.70 BroPP/1.0 SA/3 Mobile Safari/537.36",
+        "expect"  :
+        {
+            "name"    : "Yandex",
+            "version" : "22.70",
+            "major"   : "22"
+        }
+    },
+    {
         "desc"    : "Puffin",
         "ua"      : "Mozilla/5.0 (Linux; Android 6.0.1; Lenovo P2a42 Build/MMB29M; en-us) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Mobile Safari/537.36 Puffin/6.0.8.15804AP",
         "expect"  :
@@ -1393,7 +1423,7 @@
         "ua"      : "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) FxiOS/1.1 Mobile/13B143 Safari/601.1.46",
         "expect"  :
         {
-            "name"    : "Firefox",
+            "name"    : "Mobile Firefox",
             "version" : "1.1",
             "major"   : "1"
         }
@@ -1403,7 +1433,7 @@
         "ua"      : "Mozilla/5.0 (iPad; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4",
         "expect"  :
         {
-            "name"    : "Firefox",
+            "name"    : "Mobile Firefox",
             "version" : "1.0",
             "major"   : "1"
         }
@@ -1681,6 +1711,36 @@
             "name"   : "NAVER",
             "version": "10.25.0",
             "major"  : "10"
+        }
+    },
+    {
+        "desc"    : "Chrome Mobile",
+        "ua"      : "Mozilla/5.0 (Linux; Android 7.1.2; Nexus 5X Build/N2G47W) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36",
+        "expect"  :
+        {
+            "name"    : "Mobile Chrome",
+            "version" : "58.0.3029.83",
+            "major"   : "58"
+        }
+    },
+    {
+        "desc"    : "Firefox Mobile",
+        "ua"      : "Mozilla/5.0 (Linux; Android 7.1.2; Nexus 5X Build/N2G47W) AppleWebKit/537.36 (KHTML, like Gecko) FxiOS/7.5b3349 Mobile/14F89 Safari/603.2.4",
+        "expect"  :
+        {
+            "name"    : "Mobile Firefox",
+            "version" : "7.5b3349",
+            "major"   : "7"
+        }
+    },
+    {
+        "desc"    : "Firefox Mobile",
+        "ua"      : "Mozilla/5.0 (Android 5.0; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0",
+        "expect"  :
+        {
+            "name"    : "Mobile Firefox",
+            "version" : "41.0",
+            "major"   : "41"
         }
     }
 ]
